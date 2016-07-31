@@ -1,12 +1,8 @@
 package utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,26 +10,21 @@ import java.util.regex.Pattern;
  * Created by Huanghai on 2016/7/29.
  */
 public class ReadFile {
-    private static String PATTERN = "^(<img)(\\s+)src=\"http://\\S*(\\.src\")$";
+    private static String PATTERN = "^(http:)//.*(.png|.gif)$";
 
-    public static List<String> readByLine(String filePath)    {
+    public static String readByLine(String filePath)    {
         List<String> image_src_list = new ArrayList<String>();
         File file = new File(filePath);
         BufferedReader reader = null;
+        String lineString = "";
         try {
             reader = new BufferedReader(new FileReader(file));
             String tempString = null;
             int line = 1;
-            Pattern p = Pattern.compile(PATTERN);
-
             // 一次读入一行，直到读入null为文件结束
             while ((tempString = reader.readLine()) != null) {
                 if(tempString.trim() != null) {
-                    Matcher m = p.matcher(tempString);
-                    System.out.println(tempString);
-                    while (m.find())    {
-                        image_src_list.add(m.group());
-                    }
+                    lineString = lineString + tempString;
                 }
                 line++;
             }
@@ -48,19 +39,39 @@ public class ReadFile {
                 }
             }
         }
-        return image_src_list;
+        return lineString;
     }
 
+    public static void outputFile(List<String> list) {
+        try {
+            File file = new File(System.getProperty("user.dir")+"\\data\\imgSrc.txt");
+            FileWriter fileWriter = new FileWriter(file);
+            for (String s : list) {
+                fileWriter.write(s);
+                fileWriter.write("\n");
+            }
+            fileWriter.close(); // 关闭数据流
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
     public static void main(String[] args) {
-
-        /*String str = "<img src=\"http://img1.maka.im/user/2267368/images/85121897083ba8f6b7e4d4e85bc20106.png@0-0-1200-151a_90Q.src\"";
-        boolean flag = str.matches("^(<img)(\\s+)src=\"http://\\S*(\\.src\")$");
-        System.out.println(flag);*/
-
-        String html_path = System.getProperty("user.dir")+"\\data\\1.html";
-        List<String> image_src_list =  readByLine(html_path);
-        for (String src : image_src_list) {
-            System.out.println(src);
+        String pro_path = System.getProperty("user.dir");
+        String html_path = pro_path + "\\data\\1.html";
+        String download_path = pro_path + "\\data";
+        List<String> imgList = new ArrayList<String>();
+        String src =  readByLine(html_path);
+        Pattern p = Pattern.compile("(http://)[^(http)]*?(png|gif|src)");
+        Matcher m = p.matcher(src);
+        while (m.find())    {
+            imgList.add(m.group());
+        }
+        for (String s : imgList) {
+            String fileName = s;
+            fileName.replace("/","_");
+            fileName.replace(".","_");
+            new  Download().download(s,download_path,fileName);
         }
     }
 }
