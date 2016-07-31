@@ -31,7 +31,7 @@ public class Download {
             {
                 System.out.println("目录存在");
             }
-            File file=new File(fileName);
+            /*File file=new File(directory+fileName);
             if(!file.exists())
             {
                 try {
@@ -40,8 +40,8 @@ public class Download {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-            }
-            FileOutputStream fs = new FileOutputStream(directory+"\\"+fileName);
+            }*/
+            FileOutputStream fs = new FileOutputStream(directory+fileName);
             byte[] buffer = new byte[1204];
             while ((byteread = inStream.read(buffer)) != -1) {
                 bytesum += byteread;

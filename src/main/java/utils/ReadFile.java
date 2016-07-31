@@ -3,6 +3,7 @@ package utils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,8 +11,6 @@ import java.util.regex.Pattern;
  * Created by Huanghai on 2016/7/29.
  */
 public class ReadFile {
-    private static String PATTERN = "^(http:)//.*(.png|.gif)$";
-
     public static String readByLine(String filePath)    {
         List<String> image_src_list = new ArrayList<String>();
         File file = new File(filePath);
@@ -42,7 +41,7 @@ public class ReadFile {
         return lineString;
     }
 
-    public static void outputFile(List<String> list) {
+    /*public static void outputFile(List<String> list) {
         try {
             File file = new File(System.getProperty("user.dir")+"\\data\\imgSrc.txt");
             FileWriter fileWriter = new FileWriter(file);
@@ -55,11 +54,11 @@ public class ReadFile {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-    public static void main(String[] args) {
+    }*/
+    public static void main(String[] args) throws IOException {
         String pro_path = System.getProperty("user.dir");
-        String html_path = pro_path + "\\data\\1.html";
-        String download_path = pro_path + "\\data";
+        String html_path = pro_path + "/data/1.html";
+        String download_path = pro_path + "/data/";
         List<String> imgList = new ArrayList<String>();
         String src =  readByLine(html_path);
         Pattern p = Pattern.compile("(http://)[^(http)]*?(png|gif|src)");
@@ -68,10 +67,8 @@ public class ReadFile {
             imgList.add(m.group());
         }
         for (String s : imgList) {
-            String fileName = s;
-            fileName.replace("/","_");
-            fileName.replace(".","_");
-            new  Download().download(s,download_path,fileName);
+            String final_fileName = s.replace("/","*");
+            new  Download().download(s,download_path,final_fileName);
         }
     }
 }
