@@ -26,7 +26,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="H5_ImageLoader" target="1.5" />
+      <module name="H5_ImageLoader" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
